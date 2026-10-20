@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simula Design System</title>
+<link rel="stylesheet" href="simula-ds.css">
+<style>
+  /* ── Explorer chrome (documentation only — slides never use these) ── */
+  html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+  body { margin: 0; background: var(--bg-primary); color: var(--text-primary); font: 400 16px/1.55 var(--font-sans); -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: var(--accent-text); }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 40px; }
+  .topbar { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg-primary) 88%, transparent); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border-subtle); }
+  .topbar .wrap { display: flex; align-items: center; gap: 28px; height: 64px; }
+  .topbar nav { display: flex; gap: 22px; margin-left: auto; font: 500 13px/1 var(--font-mono); letter-spacing: .05em; text-transform: uppercase; }
+  .topbar nav a { color: var(--text-secondary); text-decoration: none; }
+  .topbar nav a:hover { color: var(--text-primary); }
+  .toggle { font: 500 13px/1 var(--font-mono); letter-spacing: .05em; text-transform: uppercase; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--border-default); background: var(--surface-primary); color: var(--text-primary); cursor: pointer; }
+  .brand-logo { height: 34px; width: auto; display: block; }
+  [data-theme="dark"] .brand-logo.light-only, :root:not([data-theme="dark"]) .brand-logo.dark-only { display: none; }
+
+  .hero { position: relative; overflow: hidden; padding: 120px 0 96px; border-bottom: 1px solid var(--border-subtle); }
+  .hero .curtain { position: absolute; right: -40px; top: 0; bottom: 0; width: 46%; -webkit-mask-image: linear-gradient(90deg, transparent, #000 45%); mask-image: linear-gradient(90deg, transparent, #000 45%); }
+  .hero h1 { position: relative; margin: 0; font: 500 clamp(44px, 7vw, 92px)/1 var(--font-sans); letter-spacing: -0.045em; max-width: 820px; }
+  .hero p { position: relative; max-width: 620px; margin: 28px 0 0; font-size: 20px; color: var(--text-secondary); }
+  .hero .meta-line { position: relative; margin-top: 40px; display: flex; flex-wrap: wrap; gap: 12px; }
+
+  section.doc { padding: 96px 0; border-bottom: 1px solid var(--border-subtle); }
+  .sec-head { display: grid; grid-template-columns: 200px 1fr; gap: 24px; margin-bottom: 56px; }
+  .sec-num { font: 500 14px/1.6 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--accent-text); }
+  .sec-head h2 { margin: 0; font: 500 clamp(32px, 4.4vw, 52px)/1.05 var(--font-sans); letter-spacing: -0.035em; }
+  .sec-head p { margin: 16px 0 0; max-width: 680px; color: var(--text-secondary); font-size: 18px; }
+  h3.sub { margin: 72px 0 8px; font: 500 26px/1.2 var(--font-sans); letter-spacing: -0.02em; }
+  h3.sub + .lead { margin: 0 0 28px; color: var(--text-secondary); max-width: 720px; }
+  .eyebrow-doc { font: 500 12px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-tertiary); }
+
+  .principles { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0; border-top: 2px solid var(--border-strong); }
+  .principles > div { padding: 24px 24px 24px 0; border-bottom: 1px solid var(--border-subtle); }
+  .principles b { display: block; font: 500 20px/1.3 var(--font-sans); letter-spacing: -0.01em; margin-bottom: 8px; }
+  .principles span { color: var(--text-secondary); font-size: 15px; }
+
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 16px; }
+  .sw { border: 1px solid var(--border-subtle); border-radius: 14px; overflow: hidden; background: var(--surface-primary); }
+  .sw .chip { height: 104px; position: relative; }
+  .sw .chip em { position: absolute; right: 10px; bottom: 10px; font: 500 12px/1 var(--font-mono); font-style: normal; padding: 5px 7px; border-radius: 6px; background: rgba(255,255,255,.9); color: #00010D; }
+  .sw .info { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 3px; }
+  .sw .info b { font: 500 14px/1.3 var(--font-sans); }
+  .sw .info code { font: 400 12px/1.3 var(--font-mono); color: var(--text-secondary); }
+  .sw .info small { font-size: 12px; color: var(--text-tertiary); line-height: 1.4; }
+  .sw.official { outline: 2px solid var(--accent-primary); outline-offset: -1px; }
+
+  table.doc-tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.doc-tbl th { text-align: left; font: 500 12px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text-tertiary); padding: 0 12px 12px 0; border-bottom: 2px solid var(--border-strong); }
+  table.doc-tbl td { padding: 12px 12px 12px 0; border-bottom: 1px solid var(--border-subtle); vertical-align: middle; }
+  table.doc-tbl code { font: 400 13px var(--font-mono); }
+  .dot { display: inline-block; width: 18px; height: 18px; border-radius: 5px; vertical-align: -4px; margin-right: 8px; border: 1px solid rgba(128,128,160,.3); }
+  .tbl-scroll { overflow-x: auto; }
+
+  .grads { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .grad { border-radius: 18px; overflow: hidden; border: 1px solid var(--border-subtle); background: var(--surface-primary); }
+  .grad .g { aspect-ratio: 16/9; position: relative; }
+  .grad .t { padding: 16px 18px 18px; }
+  .grad .t b { font: 500 16px/1.3 var(--font-sans); }
+  .grad .t p { margin: 6px 0 0; font-size: 14px; color: var(--text-secondary); }
+  .grad .t code { display: block; margin-top: 10px; font: 400 12px/1.5 var(--font-mono); color: var(--text-tertiary); white-space: pre-wrap; }
+
+  .typeset { border-top: 2px solid var(--border-strong); }
+  .typeset .tr { display: grid; grid-template-columns: 220px 1fr; gap: 24px; align-items: baseline; padding: 22px 0; border-bottom: 1px solid var(--border-subtle); }
+  .typeset .tr .k { display: flex; flex-direction: column; gap: 4px; }
+  .typeset .tr .k b { font: 500 15px var(--font-sans); }
+  .typeset .tr .k code { font: 400 12px var(--font-mono); color: var(--text-tertiary); }
+  .typeset .spec { zoom: .5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* 1920 canvas rendered at a fraction for specimens */
+  .stage { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 14px; overflow: hidden; border: 1px solid var(--border-subtle); container-type: inline-size; }
+  .stage > .canvas { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; transform: scale(calc(100cqw / 1920px)); }
+  @supports not (width: 1cqw) { .stage > .canvas { transform: scale(.5); } }
+  .grid-ov { position: absolute; inset: 80px 96px; display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 24px; }
+  .grid-ov i { background: rgba(55,70,204,.10); border-left: 1px solid rgba(55,70,204,.35); border-right: 1px solid rgba(55,70,204,.35); }
+  .safe { position: absolute; inset: 80px 96px; outline: 2px dashed rgba(55,70,204,.6); }
+
+  .spacing { display: flex; flex-direction: column; gap: 10px; }
+  .spacing div { display: flex; align-items: center; gap: 16px; font: 400 13px var(--font-mono); color: var(--text-secondary); }
+  .spacing i { display: block; height: 14px; background: var(--accent-primary); border-radius: 3px; }
+  .radii { display: flex; flex-wrap: wrap; gap: 20px; }
+  .radii div { width: 120px; height: 90px; border: 2px solid var(--accent-primary); background: var(--accent-wash); display: flex; align-items: flex-end; padding: 10px; font: 400 12px var(--font-mono); }
+
+  .icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
+  .icons div { border: 1px solid var(--border-subtle); border-radius: 12px; padding: 18px 12px; display: flex; flex-direction: column; align-items: center; gap: 10px; font: 400 12px var(--font-mono); color: var(--text-secondary); }
+  .icons svg { width: 32px; height: 32px; stroke: var(--text-primary); stroke-width: 1.75; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  .comp { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 40px; padding: 40px 0; border-top: 1px solid var(--border-subtle); }
+  .comp .preview { border-radius: 16px; border: 1px solid var(--border-subtle); background: var(--bg-primary); padding: 28px; overflow: hidden; display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+  .comp .preview.on-dark { background: var(--simula-night); }
+  .comp .preview .z { zoom: .5; max-width: 200%; }
+  .comp .preview .z svg { max-width: 100%; height: auto; }
+  .comp .preview .z4 { zoom: .4; }
+  .comp h4 { margin: 0 0 6px; font: 500 22px/1.2 var(--font-sans); letter-spacing: -0.015em; }
+  .comp .cls { font: 400 13px var(--font-mono); color: var(--accent-text); }
+  .comp dl { margin: 18px 0 0; display: grid; grid-template-columns: 110px 1fr; gap: 10px 14px; font-size: 14px; }
+  .comp dt { font: 500 12px/1.6 var(--font-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--text-tertiary); }
+  .comp dd { margin: 0; color: var(--text-secondary); }
+  .dd { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; font-size: 14px; }
+  .dd div { padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border-subtle); color: var(--text-secondary); }
+  .dd .do { border-left: 3px solid var(--data-positive); }
+  .dd .dont { border-left: 3px solid var(--data-negative); }
+  .dd b { display: block; font: 500 12px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+  .dd .do b { color: var(--data-positive); } .dd .dont b { color: var(--data-negative); }
+
+  .tpl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 40px 28px; }
+  .tpl .thumb { position: relative; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-subtle); background: var(--surface-secondary); }
+  .tpl .thumb iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
+  .tpl .thumb a { position: absolute; inset: 0; }
+  .tpl .h { display: flex; align-items: baseline; gap: 10px; margin-top: 16px; }
+  .tpl .h b { font: 500 18px/1.2 var(--font-sans); letter-spacing: -0.01em; }
+  .tpl .mode { margin-left: auto; font: 500 11px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border-default); color: var(--text-secondary); }
+  .tpl .mode.dk { background: var(--simula-night); color: #fff; border-color: var(--simula-night); }
+  .tpl p { margin: 8px 0 0; font-size: 14px; color: var(--text-secondary); }
+  .tpl ul { margin: 10px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--text-tertiary); display: grid; gap: 4px; }
+  .tpl ul li b { color: var(--text-secondary); font-weight: 500; }
+
+  .guides { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 0 48px; }
+  .guide { padding: 28px 0; border-top: 1px solid var(--border-subtle); }
+  .guide h4 { margin: 0 0 12px; font: 500 20px/1.25 var(--font-sans); letter-spacing: -0.01em; }
+  .guide ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 15px; display: grid; gap: 6px; }
+  .agent { margin-top: 48px; padding: 32px; border-radius: 18px; background: var(--simula-night); color: #fff; }
+  .agent h4 { margin: 0 0 16px; font: 500 22px/1.2 var(--font-sans); }
+  .agent ol { margin: 0; padding-left: 22px; display: grid; gap: 8px; color: #C9CEE3; font-size: 15px; }
+  .agent code { font: 400 13px var(--font-mono); color: #9DA8F2; }
+
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 20px; border-radius: 999px; background: var(--accent-primary); color: #fff; text-decoration: none; font: 500 15px/1 var(--font-sans); }
+  .btn.ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--border-default); }
+  footer.docs { padding: 48px 0 64px; color: var(--text-tertiary); font: 400 13px var(--font-mono); }
+
+  @media (max-width: 860px) {
+    .wrap { padding: 0 16px; }
+    .topbar nav { display: none; }
+    .sec-head, .comp, .typeset .tr { grid-template-columns: 1fr; }
+    .hero { padding: 72px 0 56px; }
+    .hero .curtain { width: 70%; opacity: .6; }
+    .tpl-grid { grid-template-columns: 1fr; }
+    .dd { grid-template-columns: 1fr; }
+    section.doc { padding: 64px 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <img class="brand-logo light-only" src="assets/logo-full.png" alt="simula">
+  <span class="brand-logo dark-only logo-neg" style="height:34px"></span>
+  <span class="eyebrow-doc">Future Performance · v1.0</span>
+  <nav><a href="#foundations">01 Foundations</a><a href="#components">02 Components</a><a href="#templates">03 Templates</a><a href="#guidelines">04 Guidelines</a></nav>
+  <button class="toggle" id="themeBtn" type="button">Dark theme</button>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <div class="curtain"></div>
+  <span class="eyebrow-doc" style="position:relative">Presentation system · 1920 × 1080</span>
+  <h1 style="margin-top:20px">Campaign data, told as performance stories.</h1>
+  <p>Foundations, components and 15 templates for client decks, reports, case studies and proposals. Light by default, dark for high-impact moments.</p>
+  <div class="meta-line"><span class="tag">Geist + Geist Mono</span><span class="tag">Primary Blue #3746CC</span><span class="tag">Grid 12 col · 96/80</span><span class="tag">WCAG AA+</span></div>
+  <div class="cta-row" style="position:relative">
+    <a class="btn" href="Simula Templates.html">Open template library →</a>
+  </div>
+</div></header>
+
+<!-- ═══════════════ 01 FUNDAMENTOS ═══════════════ -->
+<section class="doc" id="foundations"><div class="wrap">
+  <div class="sec-head"><span class="sec-num">01 / Foundations</span><div><h2>The base: color, type, grid and light.</h2><p>Everything a slide uses comes from here. Slides never use a loose hex value — only semantic tokens.</p></div></div>
+
+  <h3 class="sub" style="margin-top:0">Principles</h3><p class="lead">Five rules that settle the cases this documentation doesn't cover.</p>
+  <div class="principles">
+    <div><b>One idea per slide</b><span>The title states the conclusion; everything else proves it.</span></div>
+    <div><b>Type before effects</b><span>If the slide doesn't work without the gradient, it doesn't work.</span></div>
+    <div><b>Blue is the point</b><span>Only the most important number or word gets blue.</span></div>
+    <div><b>Contained light</b><span>A gradient is an object (strip, panel, column), never wallpaper.</span></div>
+    <div><b>Honest numbers</b><span>Zero-based scales, stated sources, illustrative data flagged.</span></div>
+  </div>
+
+  <h3 class="sub">Brand palette</h3><p class="lead">Blue outline = colors verified in the Simula color guide. The rest are derived to give the system range.</p>
+  <div class="swatches">
+    <div class="sw official"><div class="chip" style="background:#3746CC"><em>7.22:1</em></div><div class="info"><b>Primary Blue</b><code>simula.blue.500 · #3746CC</code><small>Calls to action, emphasis, primary data.</small></div></div>
+    <div class="sw official"><div class="chip" style="background:#3A4BCF"><em>6.80:1</em></div><div class="info"><b>Support Blue</b><code>simula.blue.510 · #3A4BCF</code><small>Icons and markers only. Do not merge with Primary Blue.</small></div></div>
+    <div class="sw official"><div class="chip" style="background:#00010D"></div><div class="info"><b>Night</b><code>simula.night · #00010D</code><small>Primary ink and dark background.</small></div></div>
+    <div class="sw official"><div class="chip" style="background:#FAFBFF"></div><div class="info"><b>Mist</b><code>neutral.50 · #FAFBFF</code><small>Secondary light background.</small></div></div>
+    <div class="sw official"><div class="chip" style="background:#FFFFFF"></div><div class="info"><b>White</b><code>neutral.0 · #FFFFFF</code><small>Default background; text on blues.</small></div></div>
+    <div class="sw"><div class="chip" style="background:#7D8BF0"><em>6.75:1 on Night</em></div><div class="info"><b>Blue 300</b><code>simula.blue.300 · #7D8BF0</code><small>Accent text on dark.</small></div></div>
+    <div class="sw"><div class="chip" style="background:#1E2A8B"></div><div class="info"><b>Deep facet</b><code>simula.blue.700 · #1E2A8B</code><small>Gradient stop (from the logo).</small></div></div>
+    <div class="sw"><div class="chip" style="background:#4DCBE5"></div><div class="info"><b>Logo cyan</b><code>simula.cyan.400 · #4DCBE5</code><small>Gradients only. 1.91:1 on white: never text.</small></div></div>
+    <div class="sw"><div class="chip" style="background:#9DA8F2"></div><div class="info"><b>Logo lavender</b><code>simula.lavender.300 · #9DA8F2</code><small>Gradients and 3rd data series.</small></div></div>
+    <div class="sw"><div class="chip" style="background:#0A0F2C"></div><div class="info"><b>Navy 900</b><code>simula.navy.900 · #0A0F2C</code><small>Dark surface.</small></div></div>
+    <div class="sw"><div class="chip" style="background:#4E5870"><em>7.11:1</em></div><div class="info"><b>Neutral 700</b><code>#4E5870</code><small>Secondary text.</small></div></div>
+    <div class="sw"><div class="chip" style="background:#6A7489"><em>4.70:1</em></div><div class="info"><b>Neutral 600</b><code>#6A7489</code><small>Lightest gray allowed for text.</small></div></div>
+    <div class="sw"><div class="chip" style="background:#CDD3E0"></div><div class="info"><b>Neutral 300</b><code>#CDD3E0</code><small>Borders and context bars.</small></div></div>
+    <div class="sw"><div class="chip" style="background:#E4E8F1"></div><div class="info"><b>Neutral 200</b><code>#E4E8F1</code><small>Subtle hairlines and chart grid.</small></div></div>
+  </div>
+
+  <h3 class="sub">Semantic tokens</h3><p class="lead">A slide asks for a role, not a color. Adding <code>.dark</code> to a <code>&lt;section&gt;</code> swaps the whole mapping.</p>
+  <div class="tbl-scroll"><table class="doc-tbl">
+    <thead><tr><th>Token</th><th>Light</th><th>Dark</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td><code>--bg-primary</code></td><td><span class="dot" style="background:#fff"></span>#FFFFFF</td><td><span class="dot" style="background:#00010D"></span>#00010D</td><td>Slide background</td></tr>
+      <tr><td><code>--bg-secondary</code></td><td><span class="dot" style="background:#FAFBFF"></span>#FAFBFF</td><td><span class="dot" style="background:#0A0F2C"></span>#0A0F2C</td><td>Alternate background, panels</td></tr>
+      <tr><td><code>--surface-secondary</code></td><td><span class="dot" style="background:#F2F4FA"></span>#F2F4FA</td><td><span class="dot" style="background:#121A45"></span>#121A45</td><td>Tracks, placeholders</td></tr>
+      <tr><td><code>--text-primary</code></td><td><span class="dot" style="background:#00010D"></span>#00010D · 20.8:1</td><td><span class="dot" style="background:#fff"></span>#FFFFFF · 20.8:1</td><td>Titles, numbers</td></tr>
+      <tr><td><code>--text-secondary</code></td><td><span class="dot" style="background:#4E5870"></span>#4E5870 · 7.1:1</td><td><span class="dot" style="background:#A6AECB"></span>#A6AECB · 9.4:1</td><td>Body, supporting copy</td></tr>
+      <tr><td><code>--text-tertiary</code></td><td><span class="dot" style="background:#6A7489"></span>#6A7489 · 4.7:1</td><td><span class="dot" style="background:#8D96B3"></span>#8D96B3 · 7.1:1</td><td>Labels, axes, sources</td></tr>
+      <tr><td><code>--accent-primary</code></td><td><span class="dot" style="background:#3746CC"></span>#3746CC</td><td><span class="dot" style="background:#3746CC"></span>#3746CC</td><td>Fills (white text)</td></tr>
+      <tr><td><code>--accent-text</code></td><td><span class="dot" style="background:#3746CC"></span>#3746CC · 7.2:1</td><td><span class="dot" style="background:#7D8BF0"></span>#7D8BF0 · 6.8:1</td><td>Highlighted word or number</td></tr>
+      <tr><td><code>--border-subtle</code></td><td><span class="dot" style="background:#E4E8F1"></span>#E4E8F1</td><td><span class="dot" style="background:rgba(255,255,255,.1)"></span>white 10%</td><td>Hairlines between rows</td></tr>
+      <tr><td><code>--border-default</code></td><td><span class="dot" style="background:#CDD3E0"></span>#CDD3E0</td><td><span class="dot" style="background:rgba(255,255,255,.18)"></span>white 18%</td><td>Outlines, dividers</td></tr>
+      <tr><td><code>--data-primary</code></td><td><span class="dot" style="background:#3746CC"></span>#3746CC</td><td><span class="dot" style="background:#5E6EE6"></span>#5E6EE6</td><td>Primary series / highlight</td></tr>
+      <tr><td><code>--data-secondary</code></td><td><span class="dot" style="background:#1A9BB8"></span>#1A9BB8</td><td><span class="dot" style="background:#1993AF"></span>#1993AF</td><td>2nd series (cyan)</td></tr>
+      <tr><td><code>--data-tertiary</code></td><td><span class="dot" style="background:#9DA8F2"></span>#9DA8F2</td><td><span class="dot" style="background:#9282E6"></span>#9282E6</td><td>3rd series</td></tr>
+      <tr><td><code>--data-neutral</code></td><td><span class="dot" style="background:#CDD3E0"></span>#CDD3E0</td><td><span class="dot" style="background:rgba(255,255,255,.22)"></span>white 22%</td><td>Context, comparison</td></tr>
+      <tr><td><code>--data-positive / negative</code></td><td><span class="dot" style="background:#12804A"></span><span class="dot" style="background:#DC2626"></span></td><td><span class="dot" style="background:#5FD394"></span><span class="dot" style="background:#F58A8A"></span></td><td>Change — always with arrow + sign</td></tr>
+    </tbody>
+  </table></div>
+  <p class="lead" style="margin-top:20px;font-size:14px;color:var(--text-tertiary)">Data palettes validated (color-blind separation, lightness band and contrast) against White and against Night. The 3rd series on light falls below 3:1: always pair it with a direct label.</p>
+
+  <h3 class="sub">Gradients</h3><p class="lead">Three atmospheres, reproducible in code. Never set text over the area of greatest variation.</p>
+  <div class="grads">
+    <div class="grad"><div class="g" style="background:var(--grad-ambient)"></div><div class="t"><b>A · Ambient Light</b><p>Light editorial background. At most 1 in every 4 light slides.</p><code>radial 1100×700 @ 92% −12% · #3746CC 10% → 0 (62%)
+radial 800×520 @ 108% 62% · #4DCBE5 7% → 0
+base #FAFBFF</code></div></div>
+    <div class="grad"><div class="g" style="background:var(--grad-electric)"></div><div class="t"><b>B · Electric Performance</b><p>KPI panels and achievements. White text only.</p><code>linear 135° · #1E2A8B 0 → #3746CC 42% → #4F60DA 72% → #7D8BF0 100%
++ radial lavender 55% @ 100% 0</code></div></div>
+    <div class="grad"><div class="g bg-midnight" style="--glow-x:78%;--glow-y:118%"></div><div class="t"><b>C · Midnight Intelligence</b><p>Covers, dividers, closings. Move the focal light with <code>--glow-x/y</code> on every slide.</p><code>radial 60%×70% @ glow · #3746CC 95% → 38% (34%) → 0 (68%)
+radial cyan 30% offset −9% / −8%
+base #00010D</code></div></div>
+  </div>
+
+  <h3 class="sub">Signature · the light curtain</h3><p class="lead">Derived from the logo's translucent facets: vertical bands of the brand blues, blurred 18px, with a 1px hairline texture every 14px (measurement precision). Always a contained object.</p>
+  <div class="grads">
+    <div class="grad"><div class="g curtain"></div><div class="t"><b>.curtain</b><p>Divider column, side strip.</p></div></div>
+    <div class="grad"><div class="g curtain curtain--midnight"></div><div class="t"><b>.curtain--midnight</b><p>Dark covers; apply a side mask to blend into Night.</p></div></div>
+    <div class="grad"><div class="g curtain curtain--electric"></div><div class="t"><b>.curtain--electric</b><p>Outcome panel, creative panel.</p></div></div>
+    <div class="grad"><div class="g curtain curtain--mist"></div><div class="t"><b>.curtain--mist</b><p>Mockup background on light slides.</p></div></div>
+  </div>
+
+  <h3 class="sub">Typography</h3><p class="lead">Geist 400/500/600 + Geist Mono 500 for labels, axes and sources. Sizes are for the 1920 canvas (shown at 50%).</p>
+  <div class="typeset">
+    <div class="tr"><div class="k"><b>Display XL</b><code>108 / 1.00 · 500 · −4%</code></div><div class="spec t-display-xl">Precision at scale</div></div>
+    <div class="tr"><div class="k"><b>Display L</b><code>88 / 1.02 · 500 · −3.5%</code></div><div class="spec t-display-l">Performance stories</div></div>
+    <div class="tr"><div class="k"><b>Heading XL</b><code>72 / 1.05 · 500 · −3%</code></div><div class="spec t-h-xl">CPI fell 40% in eight weeks</div></div>
+    <div class="tr"><div class="k"><b>Heading L</b><code>56 / 1.08 · 500 · −2.5%</code></div><div class="spec t-h-l">Women 35–44 were the core audience</div></div>
+    <div class="tr"><div class="k"><b>Heading M</b><code>40 / 1.15 · 500 · −2%</code></div><div class="spec t-h-m">Lead with the playable</div></div>
+    <div class="tr"><div class="k"><b>Heading S</b><code>30 / 1.22 · 600 · −1.2%</code></div><div class="spec t-h-s">Three variants, weekly rotation</div></div>
+    <div class="tr"><div class="k"><b>Body L</b><code>28 / 1.40 · 400</code></div><div class="spec t-body-l">Every dollar spent returned 62 cents within 30 days.</div></div>
+    <div class="tr"><div class="k"><b>Body M</b><code>24 / 1.45 · 400</code></div><div class="spec t-body-m">Budget moved to the winning variant every Monday.</div></div>
+    <div class="tr"><div class="k"><b>Label</b><code>Mono 24 · 500 · +3% · CAPS</code></div><div class="spec t-label c-secondary">02 Audience</div></div>
+    <div class="tr"><div class="k"><b>Caption</b><code>24 / 1.40 · 400 · the floor</code></div><div class="spec t-caption c-secondary">Source: Partner data</div></div>
+    <div class="tr"><div class="k"><b>KPI XL</b><code>120 / 0.95 · 500 · −4.5% · tabular</code></div><div class="spec t-kpi-xl">128,430</div></div>
+    <div class="tr"><div class="k"><b>KPI Hero</b><code>300 / 0.86 · 500 · −5.5% · tabular</code></div><div class="spec t-kpi-hero" style="zoom:.5">62%</div></div>
+  </div>
+
+  <h3 class="sub">Grid and safe area</h3><p class="lead">12 columns of 122px, 24px gutter, 96px horizontal and 80px vertical margins. Header and footer live inside the safe area.</p>
+  <div class="stage"><div class="canvas" style="background:var(--bg-primary)">
+    <div class="grid-ov"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="safe"></div>
+    <div style="position:absolute;left:96px;top:80px;right:96px;bottom:80px;display:flex;flex-direction:column;justify-content:space-between;font-family:var(--font-sans)">
+      <div class="s-head"><span class="eyebrow"><b>02</b> Header · eyebrow</span></div>
+      <div class="t-h-xl" style="max-width:1100px">Titles span 7–9 columns, left-aligned.</div>
+      <div class="s-foot"><img src="assets/logo-full.png" alt="" style="height:40px"><span class="sep"></span><span>Source</span><span class="pg">04</span></div>
+    </div>
+  </div></div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:48px;margin-top:56px">
+    <div><h3 class="sub" style="margin-top:0">Spacing · 8pt</h3><div class="spacing">
+      <div><i style="width:8px"></i>8 · sp-1</div><div><i style="width:16px"></i>16 · sp-2</div><div><i style="width:24px"></i>24 · sp-3 · gutter</div><div><i style="width:32px"></i>32 · sp-4</div><div><i style="width:40px"></i>40 · sp-5</div><div><i style="width:48px"></i>48 · sp-6</div><div><i style="width:64px"></i>64 · sp-8</div><div><i style="width:80px"></i>80 · sp-10 · vertical margin</div><div><i style="width:96px"></i>96 · sp-12 · horizontal margin</div><div><i style="width:128px"></i>128 · sp-16</div>
+    </div></div>
+    <div><h3 class="sub" style="margin-top:0">Radius</h3><div class="radii">
+      <div style="border-radius:8px">sm · 8<br>chips, delta</div><div style="border-radius:16px">md · 16<br>placeholders</div><div style="border-radius:24px">lg · 24<br>media</div><div style="border-radius:32px">xl · 32<br>panels</div><div style="border-radius:999px;justify-content:center;align-items:center">pill</div>
+    </div>
+    <h3 class="sub">Shadows</h3><p style="color:var(--text-secondary);font-size:15px;margin:0">Only three, and only for real elevation: <code>shadow-1</code> (tooltip, floating chip), <code>shadow-2</code> (panel over an image), <code>shadow-device</code> (phone mockups). Content cards have no shadow.</p></div>
+  </div>
+
+  <h3 class="sub">Iconography</h3><p class="lead">1.75px stroke on a 24px grid, rounded joins, no fills. Use sparingly: the system speaks through type and numbers, not icons. Never emoji.</p>
+  <div class="icons">
+    <div><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Performance</div>
+    <div><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>Objective</div>
+    <div><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.5 3.5 5.2"/></svg>Audience</div>
+    <div><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/></svg>Markets</div>
+    <div><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10.5 6h3"/></svg>Mobile</div>
+    <div><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l5.5-3.5z"/></svg>Video</div>
+    <div><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Growth</div>
+    <div><svg viewBox="0 0 24 24"><path d="M4 5h16v10H9l-5 4z"/></svg>Conversation</div>
+  </div>
+</div></section>
+
+<!-- ═══════════════ 02 COMPONENTES ═══════════════ -->
+<section class="doc" id="components"><div class="wrap">
+  <div class="sec-head"><span class="sec-num">02 / Components</span><div><h2>Pieces that combine into any slide.</h2><p>Classes live in <code>simula-ds.css</code>; charts in <code>simula-charts.js</code>. Previews at 50% of real scale. Switch the theme at the top to see the dark variant.</p></div></div>
+
+  <div class="comp">
+    <div class="preview"><div class="z" style="display:flex;gap:80px;flex-wrap:wrap">
+      <div class="kpi"><span class="c">D30 ROAS</span><span class="v accent">62%</span><span class="l">Return on ad spend</span><span class="delta">▲ 17 pts vs target</span></div>
+      <div class="kpi kpi--m"><span class="v">$1.20</span><span class="l">Blended CPI</span><span class="delta good-down">▼ 40% W1→W8</span></div>
+      <div class="kpi kpi--s"><span class="c">Total installs</span><div class="row-x" style="gap:24px"><span class="v">128,430</span><div data-chart='{"type":"spark","w":150,"h":56,"values":[9.8,12.4,14.9,16.2,17.6,18.3,19.5,19.7]}'></div></div><span class="c">vs 64K last flight</span></div>
+    </div></div>
+    <div><h4>KPI</h4><span class="cls">.kpi · .kpi--m · .kpi--s · .delta</span>
+      <dl><dt>Anatomy</dt><dd>Label (optional) · value · description · context or delta · optional sparkline.</dd><dt>Variants</dt><dd>Hero (300) · XL (120) · M (80) · S (56); with growth, sparkline, benchmark.</dd><dt>Content</dt><dd>Value ≤ 7 characters; description ≤ 5 words; delta always with arrow, sign and period.</dd></dl>
+      <div class="dd"><div class="do"><b>Do</b>Give every number a comparison: target, previous period or benchmark.</div><div class="dont"><b>Don't</b>Signal up/down with color alone, or make every KPI blue.</div></div>
+    </div>
+  </div>
+
+  <div class="comp">
+    <div class="preview"><div class="z" style="width:100%"><div class="kpi-row" style="width:1640px">
+      <div class="kpi"><span class="v accent">20M</span><span class="l">Monthly active users</span></div>
+      <div class="kpi"><span class="v">7M</span><span class="l">Daily active users</span></div>
+      <div class="kpi"><span class="v">600M+</span><span class="l">Monthly impressions</span></div>
+    </div></div></div>
+    <div><h4>KPI row</h4><span class="cls">.kpi-row</span>
+      <dl><dt>Use</dt><dd>2–4 metrics of equal weight. Separated by hairlines, never by cards.</dd><dt>Rule</dt><dd>Only the first one (or the one that proves the title) is blue.</dd></dl>
+    </div>
+  </div>
+
+  <div class="comp">
+    <div class="preview"><div class="z" style="width:1500px"><div class="rows">
+      <div class="r" style="grid-template-columns:72px 1fr 220px"><span class="n">01</span><div><div class="h">Playables drove scale at a sustainable cost.</div><div class="b">128K installs, CPI falling every week.</div></div><div class="t-kpi-m c-accent" style="text-align:right">128K</div></div>
+      <div class="r" style="grid-template-columns:72px 1fr 220px"><span class="n">02</span><div><div class="h">Payback arrived inside 30 days.</div><div class="b">D30 ROAS 62% vs a 45% target.</div></div><div class="t-kpi-m" style="text-align:right">62%</div></div>
+    </div></div></div>
+    <div><h4>Numbered rows</h4><span class="cls">.rows › .r › .n .h .b</span>
+      <dl><dt>Use</dt><dd>Executive summary, framework, measurement, next steps.</dd><dt>Content</dt><dd>3–5 rows. Title ≤ 9 words, support ≤ 20. Optional number column on the right.</dd></dl>
+      <div class="dd"><div class="do"><b>Do</b>Write every row as a complete statement.</div><div class="dont"><b>Don't</b>Turn each row into a card with a border and an icon.</div></div>
+    </div>
+  </div>
+
+  <div class="comp">
+    <div class="preview"><div class="z" style="display:flex;flex-direction:column;gap:56px;width:1300px">
+      <div class="insight"><span class="k">Key discovery</span><span class="t">The 35–44 band delivered a third of installs at the lowest CPI.</span></div>
+      <div><div class="quote">“We stopped buying impressions and started buying conversations.”</div><div class="quote-attr" style="margin-top:20px">Head of growth · Client</div></div>
+    </div></div>
+    <div><h4>Insight and quote</h4><span class="cls">.insight · .quote · .quote-attr</span>
+      <dl><dt>Insight</dt><dd>Next to or below a chart: the interpretation, in ≤ 25 words.</dd><dt>Quote</dt><dd>Only with a real, approved source. ≤ 20 words.</dd></dl>
+    </div>
+  </div>
+
+  <div class="comp">
+    <div class="preview"><div class="z" style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;width:1400px">
+      <span class="step-n">01</span><span class="step-n accent">02</span><span class="step-n ghost">03</span>
+      <span class="tag">UNO!</span><span class="tag accent">Winner · B</span><span class="flag">Illustrative data</span>
+      <div class="facet-rule" style="width:600px"></div>
+    </div></div>
+    <div><h4>Markers, tags and flags</h4><span class="cls">.step-n · .tag · .flag · .facet-rule</span>
+      <dl><dt>Flag</dt><dd><b>Required</b> on every unverified number: “Illustrative data” or “Reference figures”.</dd><dt>Facet rule</dt><dd>Editorial divider: 18% blue + hairline. One per slide at most.</dd></dl>
+    </div>
+  </div>
+
+  <div class="comp">
+    <div class="preview"><div class="z" style="width:1500px"><dl class="meta" style="margin:0">
+      <div><dt>Objective</dt><dd>Installs at D30 payback</dd></div><div><dt>Markets</dt><dd>US · Canada · Australia</dd></div>
+      <div><dt>Formats</dt><dd>Rewarded playable, video</dd></div><div><dt>Flight</dt><dd>8 weeks</dd></div>
+    </dl></div></div>
+    <div><h4>Campaign metadata</h4><span class="cls">.meta (dl)</span>
+      <dl><dt>Use</dt><dd>Campaign overview, brand concept. 2–6 pairs, 1 or 2 columns.</dd></dl>
+    </div>
+  </div>
+
+  <div class="comp">
+    <div class="preview" style="justify-content:center;background:var(--neutral-50)"><div class="z4" style="display:flex;gap:40px;align-items:center">
+      <div class="phone"><div class="screen"><div class="ph" style="width:100%;height:100%">App creative<br>9:19.5</div></div></div>
+      <div class="frame" style="width:520px;height:520px"><div class="ph" style="width:100%;height:100%">Video still<br>1:1</div><span class="play"></span><span class="cap">Video · 0:15</span></div>
+      <div class="ph" style="width:340px;height:700px">Campaign creative<br>9:19.5</div>
+    </div></div>
+    <div><h4>Media</h4><span class="cls">.phone (--s, --l) · .frame · .play · .cap · .ph</span>
+      <dl><dt>Phone</dt><dd>For app creatives. 260–400px wide. Never distort the screenshot.</dd><dt>Frame</dt><dd>Image, video, screenshot. Radius lg. Caption in mono.</dd><dt>Placeholder</dt><dd>Always labeled with what is missing and its aspect ratio.</dd></dl>
+      <div class="dd"><div class="do"><b>Do</b>Place mockups on <code>.curtain--mist</code> or <code>--electric</code>.</div><div class="dont"><b>Don't</b>Tilt phones in 3D or overlap more than two.</div></div>
+    </div>
+  </div>
+
+  <div class="comp">
+    <div class="preview"><div class="z" style="width:1400px"><table class="tbl">
+      <thead><tr><th>Channel</th><th class="num">Installs</th><th class="num">CPI</th><th class="num">D30 ROAS</th></tr></thead>
+      <tbody><tr class="hl"><td>Rewarded playable</td><td class="num">84,200</td><td class="num">$1.04</td><td class="num">71%</td></tr>
+      <tr><td>Video interstitial</td><td class="num">31,900</td><td class="num">$1.42</td><td class="num">52%</td></tr>
+      <tr><td>Sponsored character</td><td class="num">12,330</td><td class="num">$1.66</td><td class="num">44%</td></tr>
+      <tr class="total"><td>Total</td><td class="num">128,430</td><td class="num">$1.20</td><td class="num">62%</td></tr></tbody>
+    </table></div></div>
+    <div><h4>Performance table</h4><span class="cls">.tbl · tr.hl · tr.total · .num</span>
+      <dl><dt>Rule</dt><dd>Numbers right-aligned and tabular. One highlighted row. Max 6 rows × 5 columns per slide.</dd><dt>Data</dt><dd>Illustrative example.</dd></dl>
+    </div>
+  </div>
+
+  <div class="comp">
+    <div class="preview on-dark dark"><div class="z" style="display:flex;flex-direction:column;gap:56px;width:1500px">
+      <div class="s-head"><span class="eyebrow"><b>04</b> Results</span><span>UNO! · Q4 2026</span></div>
+      <div class="s-foot"><span class="logo-neg" style="height:40px"></span><span class="sep"></span><span class="src">Source: MMP</span><span class="pg">12</span></div>
+      <div class="cobrand"><span class="logo-neg" style="height:88px"></span><span class="x"></span><span class="partner" style="color:#A6AECB">Client logo</span></div>
+    </div></div>
+    <div><h4>Header, footer, logo and co-branding</h4><span class="cls">.s-head · .s-foot · .logo · .logo-neg · .cobrand</span>
+      <dl><dt>Header</dt><dd>Mono eyebrow (chapter number in blue + name) and context on the right (client · period).</dd><dt>Footer</dt><dd>40px logo · source/flag · page number. Cover and closing may omit the logo.</dd><dt>Logo</dt><dd>Official file on light. <code>.logo-neg</code> is a derived reversed version (only the wordmark turns white): replace it with the official file once available.</dd><dt>Co-brand</dt><dd>Simula always on the left; vertical hairline; partner at the Simula mark's optical height. Partner color stays inside the partner logo.</dd></dl>
+    </div>
+  </div>
+
+  <h3 class="sub">Data visualization</h3><p class="lead">Write the chart as data (<code>data-chart='{…}'</code>) and the script draws the SVG with the slide's tokens. Bars always start at zero, labels are direct, only the main point is blue.</p>
+  <div class="comp">
+    <div class="preview" style="flex-direction:column"><div class="z" data-chart='{"type":"line","w":1300,"h":440,"left":84,"right":220,"labels":["W1","W2","W3","W4","W5","W6","W7","W8"],"yMin":0.6,"yMax":1.8,"ticks":[0.6,1.0,1.4,1.8],"fmt":"$","series":[{"name":"CPI","values":[1.64,1.48,1.36,1.25,1.16,1.08,1.01,0.98],"area":true},{"name":"Benchmark","kind":"bench","values":[1.35,1.35,1.35,1.35,1.35,1.35,1.35,1.35]}],"ann":[{"i":2,"text":"Variant B","sub":"tutorial playable","dy":-120}]}'></div></div>
+    <div><h4>Line · area · time series</h4><span class="cls">type: "line"</span><dl><dt>Options</dt><dd><code>area</code>, <code>kind: bench|secondary</code>, <code>ann</code> (max 2), <code>ticks</code>, <code>fmt</code>.</dd><dt>Question</dt><dd>What changed, by how much, over what period, compared to what?</dd></dl></div>
+  </div>
+  <div class="comp">
+    <div class="preview" style="gap:48px"><div class="z" data-chart='{"type":"bars","w":620,"h":360,"labels":["18–24","25–34","35–44","45+"],"values":[14,31,33,22],"hl":[2],"fmt":"%","valueLabels":"all","yMax":40}'></div><div class="z" data-chart='{"type":"hbars","w":620,"labelW":200,"valueW":90,"rowH":64,"fmt":"%","max":70,"rows":[{"label":"UNO!","value":62,"hl":true},{"label":"Target","value":45},{"label":"Category","value":38}]}'></div></div>
+    <div><h4>Bars and horizontal bars</h4><span class="cls">type: "bars" · "hbars"</span><dl><dt>Use</dt><dd>Comparison by category, ranking, benchmark. Horizontal when labels are long.</dd><dt>Rule</dt><dd>Zero-based axis; the same <code>yMax</code> across side-by-side charts.</dd></dl></div>
+  </div>
+  <div class="comp">
+    <div class="preview" style="gap:48px;align-items:center"><div class="z" data-chart='{"type":"stack","w":620,"segs":[{"label":"Female","value":70},{"label":"Male","value":30,"tone":3}]}'></div><div class="z" data-chart='{"type":"donut","size":340,"thick":44,"segs":[{"label":"Playable","value":66},{"label":"Video","value":25},{"label":"Sponsored","value":9}],"center":{"v":"66%","l":"PLAYABLE"}}'></div></div>
+    <div><h4>Composition · 100% bar and donut</h4><span class="cls">type: "stack" · "donut"</span><dl><dt>Use</dt><dd>Parts of a whole. Prefer the 100% bar; donut only with ≤ 4 slices and the point written in the center.</dd><dt>Rule</dt><dd>2–4px gap between slices; a direct label on each.</dd></dl></div>
+  </div>
+  <div class="comp">
+    <div class="preview" style="flex-direction:column"><div class="z" data-chart='{"type":"pairs","w":1100,"labelW":280,"rowH":180,"before":"Week 1","after":"Week 8","items":[{"label":"Cost per install","note":"lower is better","a":1.64,"b":0.98,"fmt":"$"},{"label":"D7 ROAS","note":"higher is better","a":21,"b":34,"fmt":"%"}]}'></div></div>
+    <div><h4>Before × after</h4><span class="cls">type: "pairs"</span><dl><dt>Use</dt><dd>The same metrics over two periods of equal length. Each row has its own scale, so every value is labeled.</dd><dt>Rule</dt><dd>State whether “lower is better”.</dd></dl></div>
+  </div>
+  <div class="comp">
+    <div class="preview" style="flex-direction:column"><div class="z" data-chart='{"type":"funnel","w":1300,"labelW":260,"stages":[{"label":"Impressions","value":4800000},{"label":"Playable starts","value":610000},{"label":"Store visits","value":214000},{"label":"Installs","value":128430,"display":"128,430"}]}'></div></div>
+    <div><h4>Funnel</h4><span class="cls">type: "funnel"</span><dl><dt>Honesty</dt><dd>Each stage is drawn as a % of the previous stage, because volumes span orders of magnitude. The absolute volume appears as text.</dd><dt>Data</dt><dd>Illustrative example.</dd></dl></div>
+  </div>
+  <div class="comp">
+    <div class="preview" style="background:var(--neutral-50)"><img class="map-brand" src="assets/top-geos-map-c.png" alt="" style="width:48%;height:auto;filter:hue-rotate(12deg) saturate(.82) brightness(.95)"><div class="z" data-chart='{"type":"hbars","w":620,"labelW":220,"valueW":100,"rowH":56,"barH":22,"fmt":"k","rows":[{"label":"United States","value":1300000,"display":"1.3M","hl":true},{"label":"Brazil","value":400000,"display":"400K"},{"label":"United Kingdom","value":250000,"display":"250K"}]}'></div></div>
+    <div><h4>Geographic distribution</h4><span class="cls">map + hbars</span><dl><dt>Use</dt><dd>Map for recognition, bars for comparison. Never the map alone.</dd><dt>Pending</dt><dd>Re-export the map in #3746CC; it currently gets an interim hue filter.</dd></dl></div>
+  </div>
+</div></section>
+
+<!-- ═══════════════ 03 TEMPLATES ═══════════════ -->
+<section class="doc" id="templates"><div class="wrap">
+  <div class="sec-head"><span class="sec-num">03 / Templates</span><div><h2>15 archetypes, one system.</h2><p>Each template serves a different communication goal. Click to open it in the deck (← → to navigate, R to restart, Print → PDF to export).</p></div></div>
+  <div class="tpl-grid" id="tplGrid"></div>
+</div></section>
+
+<!-- ═══════════════ 04 DIRETRIZES ═══════════════ -->
+<section class="doc" id="guidelines"><div class="wrap">
+  <div class="sec-head"><span class="sec-num">04 / Guidelines</span><div><h2>How to keep everything consistent.</h2><p>For designers and for AI agents building decks with this system.</p></div></div>
+  <div class="guides">
+    <div class="guide"><h4>Brand consistency</h4><ul><li>Primary Blue #3746CC is the only accent blue. #1F6FEB (website) never goes into a deck.</li><li>Cyan and lavender: gradients and data series only.</li><li>Rhythm: ~80% light slides; dark for cover, dividers, hero metric and closing.</li><li>Never two consecutive dark slides with the same light focus.</li></ul></div>
+    <div class="guide"><h4>Data presentation</h4><ul><li>Title = conclusion (“CPI fell 40%…”), never the topic (“Campaign results”).</li><li>Bars start at zero. Side-by-side charts share the same scale.</li><li>One point in blue; everything else neutral.</li><li>Every number has a source in the footer. Unverified data says “Illustrative data” there, once.</li><li>No dual axes, no 3D, no decorative arrows.</li></ul></div>
+    <div class="guide"><h4>Content density</h4><ul><li>Title ≤ 10 words; it carries the point, so no subtitle under it.</li><li>Max 3 blocks per slide; max ~15 words besides the title.</li><li>Labels: 1–3 words, only when a chart needs a name. No label repeats the title.</li><li>Header = section eyebrow only. Footer = logo · source · page. No context lines.</li><li>Details live in the speaker notes, not on the slide.</li><li>If it doesn't fit at 24px, cut words or split the slide. Never shrink.</li></ul></div>
+    <div class="guide"><h4>Accessibility</h4><ul><li>Text: minimum contrast 4.5:1 (the lightest gray is #6A7489).</li><li>No text over the area of greatest variation in a gradient.</li><li>Change always shown with arrow + sign + text, never color alone.</li><li>Minimum type size on a slide: 24px on the 1920 canvas.</li></ul></div>
+    <div class="guide"><h4>Imagery</h4><ul><li>Real client creatives &gt; generic illustration. No decorative stock imagery.</li><li>App screenshots always inside <code>.phone</code>, undistorted.</li><li>Advertiser colors belong to the advertiser: they never join the palette.</li><li>Concept mockups say “Concept mockup” in the footer.</li></ul></div>
+    <div class="guide"><h4>Co-branding</h4><ul><li>Lockup: Simula · hairline · partner, aligned by optical height.</li><li>Partner color only inside the partner logo (e.g. Livewire green).</li><li>On dark, the partner icon uses a single-color white version.</li></ul></div>
+    <div class="guide"><h4>Export</h4><ul><li>Fixed 1920 × 1080 canvas; deck-stage scales it to the screen.</li><li>PDF: Print → Save as PDF (one slide per page).</li><li>Videos become their first frame in PDF: set a <code>poster</code>.</li><li>Fonts: Geist via Google Fonts; Inter as fallback.</li></ul></div>
+    <div class="guide"><h4>Open brand items</h4><ul><li>Official reversed logo file (currently derived in CSS).</li><li>Map re-exported in #3746CC.</li><li>Confirmed time-spent benchmarks for demo slide 03.</li></ul></div>
+  </div>
+
+  <div class="agent">
+    <h4>For AI agents: build protocol</h4>
+    <ol>
+      <li>Link <code>simula-ds.css</code>, then the deck HTML, then <code>simula-charts.js</code>, and <code>deck-stage.js</code> last.</li>
+      <li>Each slide is a <code>&lt;section class="slide"&gt;</code> with <code>.s-head</code>, <code>.s-body</code> and <code>.s-foot</code>. Dark: add <code>dark</code> + <code>bg-midnight</code> or a <code>.curtain</code>.</li>
+      <li>Start by copying the closest template from <code>Simula Templates.html</code>; don't invent new layouts unless needed.</li>
+      <li>Use only tokens (<code>var(--text-primary)</code>…) and type classes (<code>.t-h-xl</code>…). Loose hex values only for partner colors.</li>
+      <li>Write the title as a conclusion. One blue point per slide.</li>
+      <li>Never invent metrics. No data → a labeled <code>.ph</code> or <code>[XX]</code>. Example data → <code>.flag</code> “Illustrative data”.</li>
+      <li>Charts via <code>data-chart</code>, with a shared <code>yMax</code> across neighboring charts.</li>
+      <li>Before delivering: check grid alignment, contrast, text overflow, and that every slide reads in 5 seconds.</li>
+    </ol>
+  </div>
+</div></section>
+
+<footer class="docs"><div class="wrap">SIMULA — Future Performance · Presentation Design System v1.0 · Simula color guide as the source; all other values are derived and documented here.</div></footer>
+
+<script>
+  // Theme toggle (docs + specimens). Slides inside iframes keep their own modes.
+  (function () {
+    const btn = document.getElementById('themeBtn'), root = document.documentElement;
+    let saved = null; try { saved = localStorage.getItem('simula-ds-theme'); } catch (e) {}
+    const set = t => { if (t === 'dark') root.setAttribute('data-theme', 'dark'); else root.removeAttribute('data-theme');
+      btn.textContent = t === 'dark' ? 'Light theme' : 'Dark theme'; try { localStorage.setItem('simula-ds-theme', t); } catch (e) {} };
+    set(saved || 'light');
+    btn.addEventListener('click', () => set(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+  })();
+
+  const T = [
+    ['T01','Brand cover','dk','Open with authority and frame the meeting.','Lockup → title (≤ 8 words) → date','No metrics, no footer. Curtain on the right.'],
+    ['T02','Editorial statement','lt','Set the thesis the deck will prove.','Facet rule → Display XL (≤ 16 words)','No image, no chart, no supporting copy. Max 1 per deck.'],
+    ['T03','Section divider','dk','Mark the change of chapter.','360px number → chapter (1–2 words)','Nothing else. Narrow curtain on the right.'],
+    ['T04','Executive summary','lt','Deliver 3–4 conclusions at once.','Short title → 3 numbered rows: statement + proof number','≤ 5 words per row. No sub-lines, no cards.'],
+    ['T05','Hero metric','dk','Make one result memorable.','Metric name → 300px number → comparison chart','Never without a comparison. No extra sentence.'],
+    ['T06','Campaign overview','lt','Show who, where, why and the scoreboard.','Creative on a panel → title → 3 KPIs','Max 3 KPIs, 1–2 word names. Metadata goes in the notes.'],
+    ['T07','Campaign case study','lt','Tell challenge → strategy → execution → outcome.','Title → 4 columns; only the outcome gets color','Each column: 1-word label + ≤ 5-word line.'],
+    ['T08','Performance dashboard','lt','Prove the title with one chart and 3 KPIs.','Conclusion title → 8-col chart → 3 KPIs','Max 1 chart + 3 KPIs, 1 annotation.'],
+    ['T09','Growth over time','lt','Show the curve and explain the turns.','XL title → full-width time series → 1 annotation','Dashed benchmark; units on the axis.'],
+    ['T10','Audience insights','lt','Who they are — and the discovery.','Discovery as the title → 2 charts','No insight callout: the title is the insight.'],
+    ['T11','Creative showcase','lt','Let the work be the hero.','Title → 3 phones, winner raised → one number each','Max 3 creatives.'],
+    ['T12','Strategy framework','lt','Explain the method as a self-reinforcing process.','Title → axis with 3–5 steps → loop','2–3 words per step. Final step in blue.'],
+    ['T13','Before vs. after','lt','Prove the improvement on the same ruler.','Title → summary KPI → paired bars per metric','Equal-length periods, short metric names.'],
+    ['T14','Key takeaways','lt','Turn results into decisions.','Title → 3 columns with 120px numerals → action','Each takeaway starts with a verb; reasons are spoken.'],
+    ['T15','Closing / next steps','dk','End on a decision, not a thank-you.','Closing line → dated next steps → email','Max 3 steps, ≤ 4 words each.']
+  ];
+  const mk = (file, n, inner) => `<div class="thumb"><iframe loading="lazy" title="${inner.title}" src="${file}?_snthumb=${n}#${n}" tabindex="-1"></iframe><a href="${file}#${n}" aria-label="Open ${inner.title}"></a></div>`;
+  document.getElementById('tplGrid').innerHTML = T.map((t, i) => `<article class="tpl">${mk('Simula Templates.html', i + 1, { title: t[1] })}
+    <div class="h"><span class="eyebrow-doc">${t[0]}</span><b>${t[1]}</b><span class="mode ${t[2] === 'dk' ? 'dk' : ''}">${t[2] === 'dk' ? 'Dark' : 'Light'}</span></div>
+    <p>${t[3]}</p><ul><li><b>Hierarchy:</b> ${t[4]}</li><li><b>Restrictions:</b> ${t[5]}</li></ul></article>`).join('');
+</script>
+<script src="simula-charts.js"></script>
+</body>
+</html>

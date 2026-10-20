@@ -1,0 +1,8 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "simula-ds", "runtimeExecutable": "python3",
+      "runtimeArgs": ["-c", "import os,functools,http.server as h;d=os.getcwd();h.ThreadingHTTPServer(('127.0.0.1',8765),functools.partial(h.SimpleHTTPRequestHandler,directory=d)).serve_forever()"],
+      "port": 8765 }
+  ]
+}

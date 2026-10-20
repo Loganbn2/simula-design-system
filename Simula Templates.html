@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simula Template Library</title>
+<link rel="stylesheet" href="simula-ds.css">
+<style>
+  html, body { margin: 0; background: #00010D; }
+  deck-stage:not(:defined) { visibility: hidden; }
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+<!-- ═══════════ T01 · BRAND COVER · dark ═══════════ -->
+<section class="slide dark bg-midnight" data-label="T01 Brand cover" style="--glow-x:86%;--glow-y:112%"
+  data-speaker-notes="T01 Brand cover. Lockup, one title, one date line. Nothing else.">
+  <div class="curtain curtain--midnight" style="position:absolute;top:0;right:0;bottom:0;width:860px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 38%);mask-image:linear-gradient(90deg,transparent 0,#000 38%)"></div>
+  <header class="s-head" style="align-items:center">
+    <div class="cobrand"><span class="logo-neg" style="height:88px"></span><span class="x"></span><span class="partner" style="color:var(--text-secondary)">Client name</span></div>
+  </header>
+  <div class="s-body" style="display:flex;flex-direction:column;justify-content:flex-end">
+    <h1 class="t-display-xl" style="max-width:1100px">Turning campaign data into <span class="c-accent">performance stories</span>.</h1>
+    <div class="t-label c-secondary" style="margin-top:48px">Q4 2026</div>
+  </div>
+</section>
+
+<!-- ═══════════ T02 · EDITORIAL STATEMENT · light ═══════════ -->
+<section class="slide" data-label="T02 Editorial statement"
+  data-speaker-notes="T02 Editorial statement. Typography is the image. One sentence that the rest of the deck proves. Max ~16 words. Say the 'why' out loud, don't print it.">
+  <header class="s-head"><span class="eyebrow"><b>00</b> Perspective</span></header>
+  <div class="s-body" style="display:flex;flex-direction:column;justify-content:center">
+    <div class="facet-rule" style="width:640px;margin-bottom:64px"></div>
+    <h2 class="t-display-xl" style="max-width:1560px">Attention has moved into conversations. <span class="c-tertiary">Advertising has to move with it.</span></h2>
+  </div>
+  <footer class="s-foot"><img class="logo" src="assets/logo-full.png" alt="simula" style="height:40px"><span class="pg">02</span></footer>
+</section>
+
+<!-- ═══════════ T03 · SECTION DIVIDER · dark ═══════════ -->
+<section class="slide dark" data-label="T03 Section divider"
+  data-speaker-notes="T03 Section divider. Number + one-word chapter. Nothing else.">
+  <div class="curtain" style="position:absolute;top:0;right:0;bottom:0;width:440px"></div>
+  <div class="s-body" style="display:flex;flex-direction:column;justify-content:center;padding-right:520px">
+    <div style="font:500 360px/0.8 var(--font-sans);letter-spacing:-0.06em;color:var(--accent-text);font-variant-numeric:tabular-nums">02</div>
+    <h2 class="t-display-l" style="margin-top:56px">Audience</h2>
+  </div>
+  <footer class="s-foot" style="padding-right:440px"><span class="logo-neg" style="height:40px"></span></footer>
+</section>
+
+<!-- ═══════════ T04 · EXECUTIVE SUMMARY · light ═══════════ -->
+<section class="slide" data-label="T04 Executive summary"
+  data-speaker-notes="T04 Executive summary. 3 numbered findings: one short statement + one proof number each. Details go in the speaker notes.">
+  <header class="s-head"><span class="eyebrow"><b>01</b> Summary</span></header>
+  <div class="s-body g12">
+    <h2 class="span-4 t-h-xl">Three things to know.</h2>
+    <div class="span-7 start-6 rows" style="justify-content:center">
+      <div class="r" style="grid-template-columns:72px 1fr 260px;align-items:baseline;padding:40px 0"><span class="n">01</span><div class="h">Playables drove scale.</div><div class="t-kpi-m c-accent" style="text-align:right">128K</div></div>
+      <div class="r" style="grid-template-columns:72px 1fr 260px;align-items:baseline;padding:40px 0"><span class="n">02</span><div class="h">Payback inside 30 days.</div><div class="t-kpi-m" style="text-align:right">62%</div></div>
+      <div class="r" style="grid-template-columns:72px 1fr 260px;align-items:baseline;padding:40px 0"><span class="n">03</span><div class="h">Women drove installs.</div><div class="t-kpi-m" style="text-align:right">70%</div></div>
+    </div>
+  </div>
+  <footer class="s-foot"><img class="logo" src="assets/logo-full.png" alt="simula" style="height:40px"><span class="sep"></span><span class="src">Illustrative data</span><span class="pg">04</span></footer>
+</section>
+
+<!-- ═══════════ T05 · HERO PERFORMANCE METRIC · dark ═══════════ -->
+<section class="slide dark" data-label="T05 Hero metric"
+  data-speaker-notes="T05 Hero metric. One number, what it measures, and what it beat. The chart is the comparison — no extra sentence.">
+  <div class="horizon" style="left:-420px;bottom:-640px"></div>
+  <header class="s-head"><span class="eyebrow"><b>04</b> Results</span></header>
+  <div class="s-body g12" style="align-items:end">
+    <div class="span-7 stack">
+      <div class="t-h-m c-secondary" style="margin-bottom:32px">D30 ROAS</div>
+      <div class="t-kpi-hero">62<span style="font-size:.5em;letter-spacing:-0.03em">%</span></div>
+    </div>
+    <div class="span-5 stack">
+      <div data-chart='{"type":"hbars","w":690,"labelW":250,"valueW":110,"rowH":88,"barH":32,"max":70,"fmt":"%","rows":[{"label":"UNO!","value":62,"hl":true},{"label":"Target","value":45},{"label":"Category","value":38}]}'></div>
+    </div>
+  </div>
+  <footer class="s-foot"><span class="logo-neg" style="height:40px"></span><span class="sep"></span><span class="src">Illustrative data</span><span class="pg">05</span></footer>
+</section>
+
+<!-- ═══════════ T06 · CAMPAIGN OVERVIEW · light ═══════════ -->
+<section class="slide" data-label="T06 Campaign overview"
+  data-speaker-notes="T06 Campaign overview. Creative on the left; on the right, one sentence and three numbers. Objective, markets and flight dates go in the notes.">
+  <header class="s-head"><span class="eyebrow"><b>03</b> Campaign</span></header>
+  <div class="s-body g12">
+    <div class="span-5 curtain curtain--electric" style="border-radius:var(--r-xl);display:flex;align-items:center;justify-content:center">
+      <div class="phone phone--s" style="width:300px"><div class="screen"><div class="ph" style="height:100%;border-radius:0;border:0;color:#A6AECB;background:repeating-linear-gradient(135deg,transparent 0 18px,rgba(255,255,255,.08) 18px 19px),#0A0F2C">Creative<br>9:19.5</div></div></div>
+    </div>
+    <div class="span-6 start-7 stack" style="justify-content:space-between">
+      <h2 class="t-h-xl">Playables scaled UNO! across three markets.</h2>
+      <div class="kpi-row">
+        <div class="kpi kpi--m"><span class="v">128K</span><span class="l">Installs</span></div>
+        <div class="kpi kpi--m"><span class="v">$1.20</span><span class="l">CPI</span></div>
+        <div class="kpi kpi--m"><span class="v accent">62%</span><span class="l">D30 ROAS</span></div>
+      </div>
+    </div>
+  </div>
+  <footer class="s-foot"><img class="logo" src="assets/logo-full.png" alt="simula" style="height:40px"><span class="sep"></span><span class="src">Reference figures, not verified</span><span class="pg">06</span></footer>
+</section>
+
+<!-- ═══════════ T07 · CAMPAIGN CASE STUDY · light ═══════════ -->
+<section class="slide" data-label="T07 Case study"
+  data-speaker-notes="T07 Case study. Challenge → Strategy → Execution → Outcome, one short line each. Only the outcome gets color.">
+  <header class="s-head"><span class="eyebrow"><b>03</b> Case study</span></header>
+  <div class="s-body stack" style="gap:72px">
+    <h2 class="t-h-xl" style="max-width:1300px">Playables turned players into payers.</h2>
+    <div class="g12" style="flex:1;min-height:0">
+      <div class="span-3 stack" style="gap:24px;border-top:2px solid var(--border-strong);padding-top:32px">
+        <span class="t-label c-tertiary">Challenge</span>
+        <p class="t-h-l">CPI was rising.</p>
+      </div>
+      <div class="span-3 stack" style="gap:24px;border-top:2px solid var(--border-strong);padding-top:32px">
+        <span class="t-label c-tertiary">Strategy</span>
+        <p class="t-h-l">Try before the store.</p>
+      </div>
+      <div class="span-3 stack" style="gap:24px;border-top:2px solid var(--border-strong);padding-top:32px">
+        <span class="t-label c-tertiary">Execution</span>
+        <p class="t-h-l">Weekly rotation.</p>
+      </div>
+      <div class="span-3 curtain curtain--electric stack" style="border-radius:var(--r-lg);padding:32px 36px;color:#fff;justify-content:space-between">
+        <span class="t-label" style="color:#E6E9FB">Outcome</span>
+        <div class="stack" style="gap:12px"><span class="t-kpi-l">−40%</span><span class="t-h-s" style="color:#fff">CPI in 8 weeks</span></div>
+      </div>
+    </div>
+  </div>
+  <footer class="s-foot"><img class="logo" src="assets/logo-full.png" alt="simula" style="height:40px"><span class="sep"></span><span class="src">Illustrative data</span><span class="pg">07</span></footer>
+</section>
+
+<!-- ═══════════ T08 · PERFORMANCE DASHBOARD · light ═══════════ -->
+<section class="slide" data-label="T08 Performance dashboard"
+  data-speaker-notes="T08 Performance dashboard. One chart that answers the headline; three KPIs (value + name + change). Not a BI screenshot.">
+  <header class="s-head"><span class="eyebrow"><b>04</b> Performance</span></header>
+  <div class="s-body stack" style="gap:48px">
+    <h2 class="t-h-xl" style="max-width:1400px">Weekly installs doubled on the same budget.</h2>
+    <div class="g12" style="flex:1;min-height:0">
+      <div class="span-8">
+        <div data-chart='{"type":"line","w":1100,"h":520,"left":96,"right":130,"labels":["W1","W2","W3","W4","W5","W6","W7","W8"],"yMin":0,"yMax":24000,"ticks":[0,12000,24000],"fmt":"k","series":[{"name":"19.7K","values":[9800,12400,14900,16200,17600,18300,19500,19730],"area":true}],"ann":[{"i":2,"text":"Variant B live","dy":-110}]}'></div>
+      </div>
+      <div class="span-4 stack" style="justify-content:space-between;border-left:1px solid var(--border-subtle);padding-left:48px">
+        <div class="kpi kpi--s"><span class="v">128K</span><span class="l">Installs</span></div>
+        <div class="hr"></div>
+        <div class="kpi kpi--s"><span class="v">$1.20</span><span class="l">CPI</span><span class="delta good-down">▼ 40%</span></div>
+        <div class="hr"></div>
+        <div class="kpi kpi--s"><span class="v accent">62%</span><span class="l">D30 ROAS</span><span class="delta">▲ 17 pts vs target</span></div>
+      </div>
+    </div>
+  </div>
+  <footer class="s-foot"><img class="logo" src="assets/logo-full.png" alt="simula" style="height:40px"><span class="sep"></span><span class="src">Illustrative data</span><span class="pg">08</span></footer>
+</section>
+
+<!-- ═══════════ T09 · GROWTH OVER TIME · light ═══════════ -->
+<section class="slide bg-ambient" data-label="T09 Growth over time"
+  data-speaker-notes="T09 Growth over time. One time series, a benchmark, at most one annotation. The title names the metric.">
+  <header class="s-head"><span class="eyebrow"><b>04</b> Efficiency</span></header>
+  <div class="s-body stack" style="gap:48px">
+    <h2 class="t-h-xl" style="max-width:1400px">CPI fell 40% in eight weeks.</h2>
+    <div data-chart='{"type":"line","w":1728,"h":580,"left":100,"right":230,"labels":["W1","W2","W3","W4","W5","W6","W7","W8"],"yMin":0.6,"yMax":1.8,"ticks":[0.6,1.2,1.8],"fmt":"$","series":[{"name":"$0.98","values":[1.64,1.48,1.36,1.25,1.16,1.08,1.01,0.98],"area":true},{"name":"Benchmark","kind":"bench","values":[1.35,1.35,1.35,1.35,1.35,1.35,1.35,1.35]}],"ann":[{"i":2,"text":"Variant B launches","dy":-150}]}'></div>
+  </div>
+  <footer class="s-foot"><img class="logo" src="assets/logo-full.png" alt="simula" style="height:40px"><span class="sep"></span><span class="src">Illustrative data</span><span class="pg">09</span></footer>
+</section>
+
+<!-- ═══════════ T10 · AUDIENCE INSIGHTS · light ═══════════ -->
+<section class="slide" data-label="T10 Audience insights"
+  data-speaker-notes="T10 Audience insights. Two views, one discovery — and the discovery is the title. Every bar labeled, scales start at zero.">
+  <header class="s-head"><span class="eyebrow"><b>02</b> Audience</span></header>
+  <div class="s-body stack" style="gap:72px">
+    <h2 class="t-h-xl" style="max-width:1500px">Women 35–44 were the most efficient audience.</h2>
+    <div class="g12" style="flex:1;min-height:0">
+      <div class="span-5 stack" style="gap:40px">
+        <span class="t-label c-tertiary">Gender</span>
+        <div data-chart='{"type":"stack","w":640,"barH":64,"segs":[{"label":"Female","value":70},{"label":"Male","value":30,"tone":3}]}'></div>
+      </div>
+      <div class="span-6 start-7 stack" style="gap:40px;border-left:1px solid var(--border-subtle);padding-left:48px">
+        <span class="t-label c-tertiary">Age</span>
+        <div data-chart='{"type":"bars","w":760,"h":340,"labels":["18–24","25–34","35–44","45+"],"values":[14,31,33,22],"hl":[2],"fmt":"%","valueLabels":"all","yMax":40}'></div>
+      </div>
+    </div>
+  </div>
+  <footer class="s-foot"><img class="logo" src="assets/logo-full.png" alt="simula" style="height:40px"><span class="sep"></span><span class="src">Illustrative data</span><span class="pg">10</span></footer>
+</section>
+
+<!-- ═══════════ T11 · CREATIVE SHOWCASE · light ═══════════ -->
+<section class="slide bg-nevoa" data-label="T11 Creative showcase"
+  data-speaker-notes="T11 Creative showcase. The work is the hero. Up to three creatives, one number under each; the winner is lifted.">
+  <header class="s-head"><span class="eyebrow"><b>03</b> Creative</span></header>
+  <div class="s-body g12">
+    <h2 class="span-4 t-h-xl">The tutorial won.</h2>
+    <div class="span-8 row-x" style="justify-content:center;gap:64px;align-items:flex-end">
+      <div class="stack" style="align-items:center;gap:28px">
+        <div class="phone phone--s" style="width:270px;opacity:.9"><div class="screen"><div class="ph" style="height:100%;border:0;border-radius:0">A</div></div></div>
+        <span class="t-h-s c-secondary">1.1% CTR</span>
+      </div>
+      <div class="stack" style="align-items:center;gap:28px">
+        <div class="phone" style="width:320px"><div class="screen"><div class="ph" style="height:100%;border:0;border-radius:0">B</div></div></div>
+        <span class="t-h-s c-accent">2.4% CTR</span>
+      </div>
+      <div class="stack" style="align-items:center;gap:28px">
+        <div class="phone phone--s" style="width:270px;opacity:.9"><div class="screen"><div class="ph" style="height:100%;border:0;border-radius:0">C</div></div></div>
+        <span class="t-h-s c-secondary">1.6% CTR</span>
+      </div>
+    </div>
+  </div>
+  <footer class="s-foot"><img class="logo" src="assets/logo-full.png" alt="simula" style="height:40px"><span class="sep"></span><span class="src">Illustrative data</span><span class="pg">11</span></footer>
+</section>
+
+<!-- ═══════════ T12 · STRATEGY FRAMEWORK · light ═══════════ -->
+<section class="slide" data-label="T12 Strategy framework"
+  data-speaker-notes="T12 Strategy framework. 3–5 steps on one axis, two or three words each, with the loop that makes it compound.">
+  <header class="s-head"><span class="eyebrow"><b>05</b> Approach</span></header>
+  <div class="s-body stack">
+    <h2 class="t-h-xl" style="max-width:1400px">Every flight feeds the next.</h2>
+    <div style="position:relative;height:320px;margin:auto 0">
+      <svg width="1728" height="150" viewBox="0 0 1728 150" style="position:absolute;left:0;top:0;overflow:visible" aria-hidden="true">
+        <path d="M1324 76 C 1324 -6, 76 -6, 76 58" fill="none" style="stroke:var(--accent-primary)" stroke-width="2" stroke-dasharray="6 8"/>
+        <path d="M67 46 L76 62 L85 46" fill="none" style="stroke:var(--accent-primary)" stroke-width="2"/>
+        <rect x="580" y="0" width="232" height="40" rx="20" style="fill:var(--bg-primary)"/>
+        <text x="696" y="28" text-anchor="middle" style="font:500 24px var(--font-mono);letter-spacing:.03em;fill:var(--accent-text)">WEEKLY LOOP</text>
+        <line x1="76" x2="1324" y1="104" y2="104" style="stroke:var(--border-strong)" stroke-width="2"/>
+      </svg>
+      <div class="g12" style="position:absolute;left:0;right:0;top:76px">
+        <div class="span-3 stack" style="gap:28px"><span class="step-n" style="margin-left:48px">01</span><span class="t-h-m">Read the signal</span></div>
+        <div class="span-3 stack" style="gap:28px"><span class="step-n" style="margin-left:48px">02</span><span class="t-h-m">Match the format</span></div>
+        <div class="span-3 stack" style="gap:28px"><span class="step-n" style="margin-left:48px">03</span><span class="t-h-m">Build variants</span></div>
+        <div class="span-3 stack" style="gap:28px"><span class="step-n accent" style="margin-left:48px">04</span><span class="t-h-m c-accent">Reinvest</span></div>
+      </div>
+    </div>
+  </div>
+  <footer class="s-foot"><img class="logo" src="assets/logo-full.png" alt="simula" style="height:40px"><span class="pg">12</span></footer>
+</section>
+
+<!-- ═══════════ T13 · BEFORE VS AFTER · light ═══════════ -->
+<section class="slide" data-label="T13 Before vs after"
+  data-speaker-notes="T13 Before vs after. Same metrics, same period length, each on its own zero-based scale. Name the comparison window in the title.">
+  <header class="s-head"><span class="eyebrow"><b>04</b> Impact</span></header>
+  <div class="s-body g12">
+    <div class="span-5 stack" style="justify-content:space-between">
+      <h2 class="t-h-xl">Week 8 beat week 1 on every metric.</h2>
+      <div class="kpi"><span class="v accent">−40%</span><span class="l">CPI</span></div>
+    </div>
+    <div class="span-6 start-7 stack" style="justify-content:center">
+      <div data-chart='{"type":"pairs","w":830,"labelW":0,"rowH":230,"before":"W1","after":"W8","items":[{"label":"CPI","a":1.64,"b":0.98,"fmt":"$"},{"label":"CTR","a":0.9,"b":1.6,"fmt":"%1"},{"label":"D7 ROAS","a":21,"b":34,"fmt":"%"}]}'></div>
+    </div>
+  </div>
+  <footer class="s-foot"><img class="logo" src="assets/logo-full.png" alt="simula" style="height:40px"><span class="sep"></span><span class="src">Illustrative data</span><span class="pg">13</span></footer>
+</section>
+
+<!-- ═══════════ T14 · KEY TAKEAWAYS · light ═══════════ -->
+<section class="slide" data-label="T14 Key takeaways"
+  data-speaker-notes="T14 Key takeaways. Three actions, each starting with a verb. The reasons are spoken, not printed.">
+  <header class="s-head"><span class="eyebrow"><b>06</b> Takeaways</span></header>
+  <div class="s-body stack" style="justify-content:space-between">
+    <h2 class="t-h-xl">What we do next.</h2>
+    <div class="g12">
+      <div class="span-4 stack" style="gap:32px;border-top:2px solid var(--border-strong);padding:40px 40px 0 0">
+        <span style="font:500 120px/0.9 var(--font-sans);letter-spacing:-0.05em;color:var(--accent-text)">01</span>
+        <span class="t-h-l">Lead with the playable.</span>
+      </div>
+      <div class="span-4 stack" style="gap:32px;border-top:2px solid var(--border-strong);padding:40px 40px 0 0">
+        <span style="font:500 120px/0.9 var(--font-sans);letter-spacing:-0.05em;color:var(--accent-text)">02</span>
+        <span class="t-h-l">Raise bids on <span style="white-space:nowrap">35–44</span>.</span>
+      </div>
+      <div class="span-4 stack" style="gap:32px;border-top:2px solid var(--border-strong);padding:40px 40px 0 0">
+        <span style="font:500 120px/0.9 var(--font-sans);letter-spacing:-0.05em;color:var(--accent-text)">03</span>
+        <span class="t-h-l">Keep weekly rotation.</span>
+      </div>
+    </div>
+  </div>
+  <footer class="s-foot"><img class="logo" src="assets/logo-full.png" alt="simula" style="height:40px"><span class="pg">14</span></footer>
+</section>
+
+<!-- ═══════════ T15 · CLOSING / NEXT STEPS · dark ═══════════ -->
+<section class="slide dark bg-midnight" data-label="T15 Closing" style="--glow-x:18%;--glow-y:104%"
+  data-speaker-notes="T15 Closing. A clear conclusion, dated next steps, one contact. End on a decision, not a thank-you.">
+  <header class="s-head"><span class="eyebrow"><b>07</b> Next steps</span></header>
+  <div class="s-body g12">
+    <div class="span-6 stack" style="justify-content:space-between">
+      <h2 class="t-display-l">Let's build what performs next.</h2>
+      <span class="t-body-l c-secondary">name@simula.ad</span>
+    </div>
+    <div class="span-5 start-8 rows" style="justify-content:center">
+      <div class="r" style="grid-template-columns:150px 1fr;align-items:baseline"><span class="n" style="color:var(--text-tertiary)">Nov 03</span><div class="h">Approve budget</div></div>
+      <div class="r" style="grid-template-columns:150px 1fr;align-items:baseline"><span class="n" style="color:var(--text-tertiary)">Nov 10</span><div class="h">Brief 3 variants</div></div>
+      <div class="r" style="grid-template-columns:150px 1fr;align-items:baseline"><span class="n">Dec 01</span><div class="h" style="color:var(--accent-text)">Go live</div></div>
+    </div>
+  </div>
+  <footer class="s-foot"><span class="logo-neg" style="height:56px"></span><span class="pg">15</span></footer>
+</section>
+
+</deck-stage>
+<script src="simula-charts.js"></script>
+<script src="deck-stage.js"></script>
+</body>
+</html>
